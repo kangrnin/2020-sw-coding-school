@@ -23,7 +23,7 @@ class Info(Resource):
 
 class Health(Resource):
    def get(self):
-      return '2'
+      return True
 
 class Typeahead(Resource):
    def get(self, prefix):
@@ -35,15 +35,23 @@ class Reload(Resource):
 
 class Index(Resource):
    def post(self, prefix):
-      return prefix
-
-   def delete(self, prefix):
       with open(abs_path(config.path_prefix_index), 'r') as f:
          lines = f.readlines()
       with open(abs_path(config.path_prefix_index), 'w') as f:
          for line in lines:
-            if line.strip("\n") != "nickname_to_delete":
-                  f.write(line)
+            if line.strip("\n") != prefix:
+               f.write(line)
+
+   def delete(self, prefix):
+      word_count = dict()
+      with open(abs_path(config.path_word_count), 'r') as f:
+         word_count = json.load(f)
+
+      del word_count[prefix]
+      with open(abs_path(config.path_word_count), 'w') as f:
+         f.write(json.dumps(word_count))
+      
+      indexer.make_prefix()
 
 api.add_resource(Info, '/info')
 api.add_resource(Health, '/healthcheck')

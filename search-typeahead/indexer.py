@@ -8,7 +8,6 @@ from path import abs_path
 
 def make_wordcount():
     word_count = defaultdict(int)
-
     with open(abs_path(config.path_source_text), 'r', encoding='UTF8') as f:
         for line in f.readlines():
             table = line.maketrans(dict.fromkeys(config.punctuation_chars))
@@ -17,7 +16,6 @@ def make_wordcount():
             for word in line.lower().split():
                 word_count[word] += 1
 
-    info = dict()
     with open(abs_path(config.path_info), "r", encoding='UTF8') as f:
         info = json.load(f)
         
@@ -25,16 +23,20 @@ def make_wordcount():
         info["num_unique_words"] = len(word_count.keys())
         info["num_total_words"] = sum(word_count.values())
         f.write(json.dumps(info))
-
+    
+    word_count = sorted(word_count.items())
     with open(abs_path(config.path_word_count), "w", encoding='UTF8') as f:
-        f.write(json.dumps(word_count, indent=4, sort_keys=True))
+        for word, count in word_count:
+            f.write(word+' '+str(count)+'\n')
 
 def make_prefix():
+    word_count = defaultdict()
     with open(abs_path(config.path_word_count), 'r', encoding='UTF8') as f:
-        word_count = json.load(f)
+        for line in f.readlines():
+            tokens = line.split()
+            word_count[tokens[0]] = tokens[1]
 
     index = defaultdict(list)
-
     for word, count in word_count.items():
         prefix = ''
         for i in range(0, min(len(word), config.prefix_length)):
@@ -46,7 +48,6 @@ def make_prefix():
             elif count >= h[0][0]:
                 heapq.heappushpop(h, (count, word))
     
-    info = dict()
     with open(abs_path(config.path_info), "r", encoding='UTF8') as f:
         info = json.load(f)
         

@@ -4,7 +4,6 @@ from path import abs_path
 
 f = open(abs_path(config.path_prefix_index), 'r', encoding='UTF8')
 
-index = dict()
 for line in f.readlines():
    tokens = line.split()
    # tokens[0] = prefix, tokens[1:] = typeahead
