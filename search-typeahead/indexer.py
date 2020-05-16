@@ -30,11 +30,12 @@ def make_wordcount():
             f.write(word+' '+str(count)+'\n')
 
 def make_prefix():
-    word_count = defaultdict()
+    word_count = dict()
     with open(abs_path(config.path_word_count), 'r', encoding='UTF8') as f:
         for line in f.readlines():
             tokens = line.split()
-            word_count[tokens[0]] = tokens[1]
+            word_count[tokens[0]] = int(tokens[1])
+    
 
     index = defaultdict(list)
     for word, count in word_count.items():
@@ -50,7 +51,7 @@ def make_prefix():
     
     with open(abs_path(config.path_info), "r", encoding='UTF8') as f:
         info = json.load(f)
-        
+    
     with open(abs_path(config.path_info), "w", encoding='UTF8') as f:
         info["num_index"] = len(index.keys())
         index_stat = os.stat(abs_path(config.path_prefix_index))
