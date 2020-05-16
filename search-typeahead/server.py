@@ -1,6 +1,7 @@
+import config
 from flask import Flask, render_template
 from flask_restful import Resource, Api
-from prefix import get_suggestion
+from typeahead import get_typeahead
 
 app = Flask(__name__)
 
@@ -14,9 +15,9 @@ class Health(Resource):
    def get(self):
       return '2'
 
-class Suggestion(Resource):
+class Typeahead(Resource):
    def get(self, prefix):
-      return get_suggestion(prefix)
+      return get_typeahead(prefix)
 
 class Reload(Resource):
    def post(self):
@@ -31,7 +32,7 @@ class Index(Resource):
 
 api.add_resource(Info, '/info')
 api.add_resource(Health, '/healthcheck')
-api.add_resource(Suggestion, '/search/<string:prefix>')
+api.add_resource(Typeahead, '/search/<string:prefix>')
 api.add_resource(Reload, '/admin/index/reload')
 api.add_resource(Index, '/admin/index/<string:prefix>')
 
@@ -39,8 +40,5 @@ api.add_resource(Index, '/admin/index/<string:prefix>')
 def mainpage():
    return render_template('index.html')
 
-host_addr = "127.0.0.1"
-port_num = "8080"
-
 if __name__ == "__main__":
-   app.run(debug=True, host=host_addr, port=port_num)
+   app.run(debug=True, host=config.host_addr, port=config.port_num)
