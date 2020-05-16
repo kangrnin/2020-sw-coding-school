@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <title>Search-typeahead</title>
+
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <style>
+      .container {
+         min-height: 100vh;
+      }
+      .searchbox {
+         padding-top: 30%;
+         text-align: center;
+      }
+      .titlebox {
+         display: inline-block;
+         text-align: right;
+      }
+      #page-title {
+         font-size: 70px;
+      }
+      #page-subtitle {
+         margin-top: 10px;
+      }
+      #searchbar{
+         margin-top: 30px;
+         height: 40px;
+         width: 600px;
+         border: none;
+         border-radius: 20px;
+         box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.2);
+         font-size: 20px;
+         padding-left: 25px;
+      }
+      #searchbar:focus {
+         outline: none;
+      }
+      #suggestion {
+         margin-top: 30px;
+         width: 600px;
+         border: none;
+         border-radius: 20px;
+         text-align: left;
+         padding-left: 25px;
+         box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.1);
+         font-size: 20px;
+         display: none;
+      }
+      .buttonbox-wrapper {
+         text-align: center;
+      }
+      .buttonbox {
+         margin-top: 70px;
+         display: inline-block;
+         margin-right: 0%;
+         text-align: left;
+      }
+      .input-group {
+         margin-left: auto;
+         margin-right: auto;
+      }
+      #result {
+         display: inline-block;
+         text-align:left;
+         padding-top: 70px;
+         width: 400px;
+         font-size: 18px;
+      }
+   </style>
+   <script>
+      function set_result(str) {
+         const result = $("#result").text(str);
+         result.html(result.html().replace(/\n/g,'<br/>'));
+      }
+      function get_suggestion(method, url, prefix) {
+         if(prefix === undefined || prefix === '') {
+            $('#suggestion').css('display', 'none');
+            return;
+         }
+
+         $.ajax({
+            type: method,
+            url: url,
+            dataType: 'json',
+            success: function (response) {
+               response = JSON.parse(response);
+               $('#suggestion').css('display', 'inline-block');
+
+               if(response.result === 'success') {
+                  console.log(response.suggestion);
+                  $("#suggestion").empty();
+                  response.suggestion.forEach((str) => {
+                     $("#suggestion").append(str+'<br/>');
+                  });
+                  
+                  $("#suggestion").html($("#suggestion").html().replace(/\n/g,'<br/>'));
+               }
+               else {
+                  $('#suggestion').text('no matching keyword');
+               }
+            }
+         });
+      }
+      function request_server(method, url, prefix) {
+         console.log(prefix);
+
+         $.ajax({
+            type: method,
+            url: url,
+            success: function (response) {
+               set_result(url+"\n\n"+response);
+            }
+         });
+      }
+
+      $(document).ready(() => {
+         $('#searchbar').on('change keyup paste', () => {
+            get_suggestion('get', '/search/' + $('#searchbar').val(), $('#searchbar').val());
+         });
+         $('#status').on('click', () => {
+            request_server('get', '/info');
+         });
+         $('#health').on('click', () => {
+            request_server('get', '/healthcheck');
+         });
+         $('#reload').on('click', () => {
+            request_server('post', '/admin/index/reload');
+         });
+         $('#prefixput').on('click', () => {
+            request_server('post', '/admin/index/' + $('#prefixputtext').val());
+         });
+         $('#prefixdelete').on('click', () => {
+            request_server('delete', '/admin/index/' + $('#prefixdeletetext').val());
+         });
+      })
+   </script>
+</head>
+<body>
+   <div class="container">
+      <div class="searchbox">
+         <div class="titlebox">
+            <h1 id="page-title">
+               Search-Typeahead
+            </h1>
+            <h4 id="page-subtitle"><a href="https://github.com/kangrnin/2020-sw-coding-school">2020-sw-coding-school</a></h4>
+         </div>
+         <input type="text" id="searchbar" placeholder="Search..">
+         <br>
+         <p id="suggestion"></p>
+      </div>
+      <div class="buttonbox-wrapper">
+         <div class="buttonbox">
+            <button id="status" class="btn btn-primary">Status</button>
+            <button id="health" class="btn btn-primary">Healthcheck</button>
+            <button id="reload" class="btn btn-primary">Reload</button>
+            <br><br>
+            <button id="prefixput" class="btn btn-primary">Create/Update prefix</button>
+            <input id="prefixputtext"type="text" class="form-control">
+            </form>
+            <br>
+            <button id="prefixdelete" class="btn btn-primary">Delete prefix</button>
+            <input id="prefixdeletetext", type="text" class="form-control">
+         </div>
+         <br>
+         <p id="result"></p>
+      </div>
+   </div>
+</body>
+</html>
