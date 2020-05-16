@@ -1,7 +1,12 @@
-import config
 from flask import Flask, render_template
 from flask_restful import Resource, Api
+
+import json
+
+import config
+import indexer
 from typeahead import get_typeahead
+from path import abs_path
 
 app = Flask(__name__)
 
@@ -9,7 +14,12 @@ api = Api(app)
 
 class Info(Resource):
    def get(self):
-      return '1'
+      with open(abs_path(config.path_info), 'r', encoding='UTF8') as f:
+         info = json.load(f)
+         info['version'] = config.version
+         info['prefix_length'] = config.prefix_length
+         info['pq_size'] = config.pq_size
+         return info
 
 class Health(Resource):
    def get(self):
@@ -21,14 +31,19 @@ class Typeahead(Resource):
 
 class Reload(Resource):
    def post(self):
-      return '4'
+      indexer.index()
 
 class Index(Resource):
    def post(self, prefix):
       return prefix
 
    def delete(self, prefix):
-      return prefix
+      with open(abs_path(config.path_prefix_index), 'r') as f:
+         lines = f.readlines()
+      with open(abs_path(config.path_prefix_index), 'w') as f:
+         for line in lines:
+            if line.strip("\n") != "nickname_to_delete":
+                  f.write(line)
 
 api.add_resource(Info, '/info')
 api.add_resource(Health, '/healthcheck')

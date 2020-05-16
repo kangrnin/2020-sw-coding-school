@@ -115,7 +115,7 @@
             type: method,
             url: url,
             success: function (response) {
-               set_result(url+"\n\n"+response);
+               set_result(url+"\n\n"+JSON.stringify(response));
             }
          });
       }
