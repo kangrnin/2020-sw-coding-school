@@ -1,2 +1,12 @@
+.idea/
+*.iml
+.pytest_cache/
+reports/
+.coverage
+*/__pycache__/
 *.pyc
-*.bin
+data/
+build/
+dist/
+<proj>.egg-info/
+cover/
