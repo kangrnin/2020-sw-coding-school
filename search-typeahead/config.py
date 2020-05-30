@@ -1,15 +1,32 @@
-version = 1.0
+class BaseConfig(object):
+   VERSION = '1.4'
 
-# flask server
-host_addr = '127.0.0.1'
-port_num = '8080'
+   HOST_ADDR = '127.0.0.1'
+   PORT_NUM = '8080'
 
-# indexing
-path_source_text = 'data/text.txt'
-path_word_count = 'data/wordcount.bin'
-path_prefix_index = 'data/prefix.bin'
-path_info = 'data/info.bin'
+   PUNCTUATION_CHARS = '=_;:!?.,--—*[]{}()#$%`&"“”\'‘’'
+   PREFIX_LENGTH = 5
+   PQ_SIZE = 8
 
-punctuation_chars = '=_;:!?.,--—*[]{}()#$%`&"“”\'‘’'
-prefix_length = 5
-pq_size = 8
+class ProductionConfig(BaseConfig):
+   FLASK_ENV = 'production'
+   DEBUG = False
+   TESTING = False
+
+   PATH_SOURCE_TEXT = 'data/pro/text.txt'
+   PATH_WORD_COUNT = 'data/pro/wordcount.bin'
+   PATH_PREFIX_INDEX = 'data/pro/prefix.bin'
+   PATH_PREFIX_UPDATE = 'data/pro/prefix.bin'
+   PATH_PREFIX_DELETE = 'data/pro/prefix.bin'
+
+class DevelopmentConfig(BaseConfig):
+   FLASK_ENV = 'development'
+   DEBUG = True
+   TESTING = True
+   PORT_NUM = '3000'
+
+   PATH_SOURCE_TEXT = 'data/dev/text.txt'
+   PATH_WORD_COUNT = 'data/dev/wordcount.bin'
+   PATH_PREFIX_INDEX = 'data/dev/prefix.bin'
+   PATH_PREFIX_UPDATE = 'data/dev/prefix_update.bin'
+   PATH_PREFIX_DELETE = 'data/dev/prefix_delete.bin'
