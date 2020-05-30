@@ -2,6 +2,7 @@ import heapq
 import os
 from collections import defaultdict
 import json
+from jamo import h2j, j2hcj
 from .path import abs_path
 from .prefix_extractor import get_prefix_list
 
@@ -9,7 +10,7 @@ class Typeahead:
    config = dict()
    def __init__(self, config):
       self.config = config
-      
+
       f = open(abs_path(self.config['PATH_PREFIX_INDEX']), 'r', encoding='UTF8')
       
       self.index = defaultdict(list)
@@ -19,6 +20,7 @@ class Typeahead:
          self.index[tokens[0]] = tokens[1:]
 
    def get_typeahead(self, prefix):
+      prefix = j2hcj(h2j(prefix))
       if prefix in self.index:
          return {'result': 'success', 'typeahead': self.index[prefix][:5]}
       else:
