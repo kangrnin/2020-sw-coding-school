@@ -9,8 +9,9 @@ class Typeahead:
    config = dict()
    def __init__(self, config):
       self.config = config
-      f = open(abs_path(config['PATH_PREFIX_INDEX']), 'r', encoding='UTF8')
-
+      
+      f = open(abs_path(self.config['PATH_PREFIX_INDEX']), 'r', encoding='UTF8')
+      
       self.index = defaultdict(list)
       for line in f.readlines():
          tokens = line.split()

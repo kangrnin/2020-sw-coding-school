@@ -61,9 +61,9 @@ class Indexer:
          
 
    def update_index(self, prefix):
-      with open(abs_path(self.config['PATH_PREFIX_UPDATE']), 'a+', encoding='UTF8') as f:
+      with open(abs_path(self.config['PATH_PREFIX_UPDATE']), 'a', encoding='UTF8') as f:
          f.write(prefix+'\n')
 
    def delete_index(self, prefix):
-      with open(abs_path(self.config['PATH_PREFIX_DELETE']), 'a+', encoding='UTF8') as f:
+      with open(abs_path(self.config['PATH_PREFIX_DELETE']), 'a', encoding='UTF8') as f:
          f.write(prefix+'\n')

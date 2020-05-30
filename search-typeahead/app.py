@@ -3,11 +3,17 @@ from flask import Flask, render_template
 import json
 import sys
 import click
+from os import path
 from .indexer import Indexer
 from .typeahead import Typeahead
 from .path import abs_path
 
 indexer = Indexer(app.config)
+if not path.exists(abs_path(app.config['PATH_PREFIX_INDEX'])):
+   indexer.make_wordcount()
+   indexer.make_prefix()
+   app.logger.info('Index file does not exist. Built index file automatically')
+
 typeahead = Typeahead(app.config)
 
 @app.route('/', methods=['GET'])
@@ -68,8 +74,8 @@ def delete_index(prefix):
       app.logger.error(sys.exc_info())
       return {"result" : "failure"}
 
-@app.cli.command('make-prefix')
-def make_prefix():
+@app.cli.command('build-prefix')
+def build_prefix():
    indexer.make_wordcount()
    indexer.make_prefix()
    app.logger.info('prefix build complete')
