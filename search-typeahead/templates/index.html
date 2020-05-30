@@ -90,7 +90,6 @@
             url: url,
             dataType: 'json',
             success: function (response) {
-               response = JSON.parse(response);
                $('#suggestion').css('display', 'inline-block');
 
                if(response.result === 'failure'){
