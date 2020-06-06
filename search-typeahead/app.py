@@ -18,7 +18,6 @@ def mainpage():
 @app.route('/info', methods=['GET'])
 def get_info():
    info = dict()
-   print(app.config)
    info['VERSION'] = app.config['VERSION']
    info['FLASK_ENV'] = app.config['FLASK_ENV']
    info['DEBUG'] = app.config['DEBUG']
@@ -59,10 +58,15 @@ def delete_index(word):
 
 @app.route('/admin/index/reload', methods=['POST'])
 def reload():
-   #try:
-   typeahead.apply_changes()
-   app.logger.info('applied index changes')
-   return {"result" : "success"}
+   result = typeahead.apply_changes()
+   
+   if result == True:
+      app.logger.info('applied index changes')
+      return {"result" : "success"}
+   else:
+      app.logger.info('nothing to change')
+      return {"result" : "failure", "info" : "nothing to change"}
+      
    #except:
    #   app.logger.error(sys.exc_info())
    #   return {"result" : "failure"}

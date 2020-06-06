@@ -16,6 +16,7 @@
       .searchbox {
          padding-top: 30%;
          text-align: center;
+         position: relative;
       }
       .titlebox {
          display: inline-block;
@@ -41,6 +42,7 @@
          outline: none;
       }
       #suggestion {
+         /*
          margin-top: 30px;
          width: 600px;
          border: none;
@@ -50,6 +52,24 @@
          padding-top: 7px;
          padding-bottom: 12px;
          box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.1);
+         font-size: 20px;
+         display: none;
+         */
+         position: absolute;
+         left:0;
+         right:0;
+         margin-left: auto;
+         margin-right: auto;
+         margin-top: 30px;
+         width: 600px;
+         border: none;
+         border-radius: 20px;
+         text-align: left;
+         padding-left: 25px;
+         padding-top: 7px;
+         padding-bottom: 12px;
+         box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.1);
+         background: white;
          font-size: 20px;
          display: none;
       }
@@ -69,6 +89,7 @@
       #result {
          display: inline-block;
          text-align:left;
+         word-break: break-all;
          padding-top: 70px;
          width: 400px;
          font-size: 18px;

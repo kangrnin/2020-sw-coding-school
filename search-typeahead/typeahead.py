@@ -35,17 +35,24 @@ class Typeahead:
          f.write(word + '\n')
 
    def apply_changes(self):
-      index_new = self.index
-      with open(version_path(self.config['PATH_UPDATE'], self.version), 'r', encoding='UTF8') as f:
-         for word in set(f.read().splitlines()):
-            for prefix in get_prefix_list(word, self.config['PREFIX_LENGTH']):
-               index_new[prefix].insert(0, word)
+      update_path = version_path(self.config['PATH_UPDATE'], self.version)
+      delete_path = version_path(self.config['PATH_DELETE'], self.version)
+      if not os.path.exists(update_path) and not os.path.exists(delete_path):
+         return False
       
-      with open(version_path(self.config['PATH_DELETE'], self.version), 'r', encoding='UTF8') as f:
-         for word in set(f.read().splitlines()):
-            for prefix in get_prefix_list(word, self.config['PREFIX_LENGTH']):
-               if prefix in index_new and word in index_new[prefix]:
-                  index_new[prefix].remove(word)
+      index_new = self.index
+      if os.path.exists(update_path):
+         with open(update_path, 'r', encoding='UTF8') as f:
+            for word in set(f.read().splitlines()):
+               for prefix in get_prefix_list(word, self.config['PREFIX_LENGTH']):
+                  index_new[prefix].insert(0, word)
+      
+      if os.path.exists(delete_path):
+         with open(delete_path, 'r', encoding='UTF8') as f:
+            for word in set(f.read().splitlines()):
+               for prefix in get_prefix_list(word, self.config['PREFIX_LENGTH']):
+                  if prefix in index_new and word in index_new[prefix]:
+                     index_new[prefix].remove(word)
 
       self.index = index_new
       self.version += 1
@@ -55,6 +62,8 @@ class Typeahead:
       with open(version_path(self.config['PATH_INDEX'], self.version), 'w', encoding='UTF8') as f:
          for prefix in index_new.keys():
             f.write(prefix + ' ' + ' '.join(index_new[prefix])+'\n')
+      
+      return True
 
 if __name__ == '__main__':
     index()
