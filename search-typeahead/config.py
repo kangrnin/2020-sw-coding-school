@@ -13,11 +13,10 @@ class ProductionConfig(BaseConfig):
    DEBUG = False
    TESTING = False
 
-   PATH_SOURCE_TEXT = 'data/pro/text.txt'
-   PATH_WORD_COUNT = 'data/pro/wordcount.bin'
-   PATH_PREFIX_INDEX = 'data/pro/prefix.bin'
-   PATH_PREFIX_UPDATE = 'data/pro/prefix.bin'
-   PATH_PREFIX_DELETE = 'data/pro/prefix.bin'
+   PATH_SOURCE = 'data/pro/text.txt'
+   PATH_INDEX = 'data/pro/VERSION/index.bin'
+   PATH_UPDATE = 'data/pro/VERSION/update.bin'
+   PATH_DELETE = 'data/pro/VERSION/delete.bin'
 
 class DevelopmentConfig(BaseConfig):
    FLASK_ENV = 'development'
@@ -25,8 +24,7 @@ class DevelopmentConfig(BaseConfig):
    TESTING = True
    PORT_NUM = '3000'
 
-   PATH_SOURCE_TEXT = 'data/dev/text.txt'
-   PATH_WORD_COUNT = 'data/dev/wordcount.bin'
-   PATH_PREFIX_INDEX = 'data/dev/prefix.bin'
-   PATH_PREFIX_UPDATE = 'data/dev/prefix_update.bin'
-   PATH_PREFIX_DELETE = 'data/dev/prefix_delete.bin'
+   PATH_SOURCE = 'data/dev/text.txt'
+   PATH_INDEX = 'data/dev/VERSION/index.bin'
+   PATH_UPDATE = 'data/dev/VERSION/update.bin'
+   PATH_DELETE = 'data/dev/VERSION/delete.bin'

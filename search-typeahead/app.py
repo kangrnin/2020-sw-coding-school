@@ -9,11 +9,6 @@ from .typeahead import Typeahead
 from .path import abs_path
 
 indexer = Indexer(app.config)
-if not path.exists(abs_path(app.config['PATH_PREFIX_INDEX'])):
-   indexer.make_wordcount()
-   indexer.make_prefix()
-   app.logger.info('Index file does not exist. Built index file automatically')
-
 typeahead = Typeahead(app.config)
 
 @app.route('/', methods=['GET'])
@@ -42,41 +37,38 @@ def suggestion(prefix):
       app.logger.info(typeahead.get_typeahead(prefix))
    return typeahead.get_typeahead(prefix)
 
+@app.route('/admin/index/<word>', methods=['POST'])
+def update_index(word):
+   try:
+      typeahead.update_index(word)
+      app.logger.info('updated word "'+word+'" to the first element of index')
+      return {"result" : "success"}
+   except:
+      app.logger.error(sys.exc_info())
+      return {"result" : "failure"}
+
+@app.route('/admin/index/<word>', methods=['DELETE'])
+def delete_index(word):
+   try:
+      typeahead.delete_index(word)
+      app.logger.info('deleted word "'+word+'" from index')
+      return {"result" : "success"}
+   except:
+      app.logger.error(sys.exc_info())
+      return {"result" : "failure"}
+
 @app.route('/admin/index/reload', methods=['POST'])
 def reload():
-   try:
-      typeahead.apply_changes()
-      indexer.make_prefix(typeahead.index)
-      app.logger.info('applied index changes')
-      return {"result" : "success"}
-   except:
-      app.logger.error(sys.exc_info())
-      return {"result" : "failure"}
-   
-
-@app.route('/admin/index/<prefix>', methods=['POST'])
-def update_index(prefix):
-   try:
-      indexer.update_index(prefix)
-      app.logger.info('updated word "'+prefix+'" to the first element of index')
-      return {"result" : "success"}
-   except:
-      app.logger.error(sys.exc_info())
-      return {"result" : "failure"}
-
-@app.route('/admin/index/<prefix>', methods=['DELETE'])
-def delete_index(prefix):
-   try:
-      indexer.delete_index(prefix)
-      app.logger.info('deleted word "'+prefix+'" from index')
-      return {"result" : "success"}
-   except:
-      app.logger.error(sys.exc_info())
-      return {"result" : "failure"}
+   #try:
+   typeahead.apply_changes()
+   app.logger.info('applied index changes')
+   return {"result" : "success"}
+   #except:
+   #   app.logger.error(sys.exc_info())
+   #   return {"result" : "failure"}
 
 @app.cli.command('build-prefix')
 def build_prefix():
-   indexer.make_wordcount()
    indexer.make_prefix()
    app.logger.info('prefix build complete')
 
